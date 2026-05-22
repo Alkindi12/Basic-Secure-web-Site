@@ -1,6 +1,9 @@
 #  Intertainment Booking Website
 
-A full-stack travel booking website where users can browse and book entertainment trips. Built with Node.js/Express backend, React frontend, and SQLite database.
+A full-stack Intertainment  booking website where users can browse and book entertainment trips. Built with {Node.js/Express backend}, React frontend, and {SQLite database}.
+
+<img width="1293" height="719" alt="manager Dash" src="https://github.com/user-attachments/assets/b9f97204-c532-42fc-9ee4-bec177c6aea9" />
+
 
 ## Features
 
