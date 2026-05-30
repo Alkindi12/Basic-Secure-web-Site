@@ -6,7 +6,7 @@ the project named as Trouly = Trusted Reservation Of Unique Local activitY
 
 Some images of the projects 
 
-Admin dash<img width="1544" height="670" alt="Screenshot 2026-05-30 232936" src="https://github.com/user-attachments/assets/cd24105d-1a39-4418-95f0-2ba9dc5b5f0f" />
+Admin dash can give the user permission to upload his trips to users<img width="1544" height="670" alt="Screenshot 2026-05-30 232936" src="https://github.com/user-attachments/assets/cd24105d-1a39-4418-95f0-2ba9dc5b5f0f" />
 User Can mangae his Trips <img width="1438" height="880" alt="Screenshot 2026-05-30 233242" src="https://github.com/user-attachments/assets/14c5697c-c536-45e8-bc04-5112e526ffe7" />
 
 
