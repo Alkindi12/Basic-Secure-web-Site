@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend security tests (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [22, 24]
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci --no-fund
+      - run: npm test
+      - name: Dependency audit (high and critical)
+        # Reports known CVEs in dependencies. It does not block the build, because a new
+        # advisory can appear at any time; check this step's output on every run.
+        continue-on-error: true
+        run: npm audit --omit=dev --audit-level=high
+
+  frontend:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-fund
+      - run: npm run build
+      - name: Dependency audit (high and critical)
+        # Reports known CVEs in dependencies. It does not block the build, because a new
+        # advisory can appear at any time; check this step's output on every run.
+        continue-on-error: true
+        run: npm audit --omit=dev --audit-level=high

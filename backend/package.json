@@ -1,0 +1,27 @@
+{
+  "name": "tourly-backend",
+  "version": "2.0.0",
+  "description": "Tourly API: a travel-booking backend built to practise security from scratch",
+  "private": true,
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.js",
+    "seed": "node --disable-warning=ExperimentalWarning src/db/seed.js",
+    "create-admin": "node --disable-warning=ExperimentalWarning src/db/createAdmin.js",
+    "test": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1 \"tests/**/*.test.js\""
+  },
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "multer": "^2.0.2",
+    "sharp": "^0.35.4"
+  }
+}

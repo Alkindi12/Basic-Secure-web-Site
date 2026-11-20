@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Secrets: copy backend/.env.example to backend/.env instead
+.env
+.env.*
+!.env.example
+
+# Runtime data (created by the app, never committed)
+*.sqlite
+*.sqlite-*
+backend/data/*.sqlite
+backend/data/*.sqlite-*
+backend/storage/trips/*
+!backend/storage/trips/.gitkeep
+
+# Build output and logs
+frontend/dist/
+*.log
+npm-debug.log*
+
+# Editors / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db

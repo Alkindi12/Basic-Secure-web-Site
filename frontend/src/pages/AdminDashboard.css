@@ -1,0 +1,241 @@
+.admin-dashboard {
+  min-height: calc(100vh - 80px);
+  padding: 3rem 2rem;
+  background-color: #f8f9fa;
+}
+
+.admin-dashboard .container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-dashboard h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ddd;
+}
+
+.tab {
+  padding: 1rem 2rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tab:hover {
+  color: #3498db;
+}
+
+.tab.active {
+  color: #3498db;
+  border-bottom-color: #3498db;
+}
+
+.users-section,
+.requests-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.users-section h2,
+.requests-section h2 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.users-table {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #3498db;
+  color: white;
+}
+
+th, td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.role-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.role-user {
+  background-color: #ecf0f1;
+  color: #2c3e50;
+}
+
+.role-manager {
+  background-color: #3498db;
+  color: white;
+}
+
+.role-admin {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.requests-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.request-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+}
+
+.request-info h3 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.request-info p {
+  margin: 0.25rem 0;
+  color: #555;
+}
+
+.request-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-approve,
+.btn-reject {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-approve {
+  background-color: #27ae60;
+  color: white;
+}
+
+.btn-approve:hover {
+  background-color: #229954;
+}
+
+.btn-reject {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-reject:hover {
+  background-color: #c0392b;
+}
+
+.btn-change-role {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius-md, 4px);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, var(--primary-color, #6366f1), var(--primary-dark, #4f46e5));
+  color: white;
+  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+}
+
+.btn-change-role:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+}
+
+.btn-change-role:active {
+  transform: translateY(0);
+}
+
+.no-action {
+  color: var(--text-secondary, #64748b);
+  font-style: italic;
+}
+
+.no-requests,
+.admin-loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.25rem;
+  color: #555;
+}
+
+@media (max-width: 768px) {
+  .request-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .request-actions {
+    width: 100%;
+  }
+
+  .btn-approve,
+  .btn-reject {
+    flex: 1;
+  }
+}
+
+
+
+.audit-intro {
+  color: #64748b;
+  margin: -0.5rem 0 1rem;
+}
+
+.audit-action {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.audit-ok { background: #dcfce7; color: #166534; }
+.audit-warn { background: #fef3c7; color: #92400e; }
+.audit-bad { background: #fee2e2; color: #991b1b; }
+
+.audit-ip {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.85rem;
+  color: #64748b;
+}

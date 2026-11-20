@@ -1,244 +1,218 @@
-#  Intertainment Booking Website
+# Tourly: a travel-booking site built to practise security from scratch
 
-A full-stack Intertainment  booking website where users can browse and book entertainment trips. Built with {Node.js/Express backend}, React frontend, and {SQLite database}.
+Tourly (first named *Trouly*: **T**rusted **R**eservation **O**f **U**nique **L**ocal activit**Y**) is a
+full-stack booking website. Visitors browse trips, users book them, managers publish trips and admins
+run the platform.
 
-the project named as Trouly = Trusted Reservation Of Unique Local activitY
+The real purpose of the project is **learning how to build security into a web application by hand**.
+Version 2 is the result of a full security review of v1: 19 findings were fixed, each one is covered by an
+automated test, and most controls (rate limiting, CSRF tokens, the session store, file-type detection,
+security headers and validation) are **written from scratch** so you can read exactly how they work.
 
-Some images of the projects 
+<p align="center"><img src="docs/screenshots/packages.jpg" width="900" alt="Tourly packages page"></p>
 
-Admin dash can give the user permission to upload his trips to users<img width="1544" height="670" alt="Screenshot 2026-05-30 232936" src="https://github.com/user-attachments/assets/cd24105d-1a39-4418-95f0-2ba9dc5b5f0f" />
-User Can mangae his Trips <img width="1438" height="880" alt="Screenshot 2026-05-30 233242" src="https://github.com/user-attachments/assets/14c5697c-c536-45e8-bc04-5112e526ffe7" />
+| | |
+|---|---|
+| **Stack** | Node.js · Express 5 · SQLite (built-in `node:sqlite`) · React 19 · Vite |
+| **Security review** | [`docs/Security-Review-v1.docx`](docs/Security-Review-v1.docx): findings, evidence, diagrams |
+| **Security design** | [`docs/SECURITY.md`](docs/SECURITY.md): threat model, every control and where it lives |
+| **Tests** | 31 backend tests (`npm test`) + a full browser walkthrough of every role |
 
+---
 
-<img width="1293" height="719" alt="manager Dash" src="https://github.com/user-attachments/assets/b9f97204-c532-42fc-9ee4-bec177c6aea9" />
+## Security features (v2)
 
+| Area | What Tourly does |
+|---|---|
+| 🔑 **Passwords** | bcrypt (cost 12) · NIST-style policy: 8–64 characters, common passwords rejected, no forced symbols |
+| 🚫 **Brute force** | Rate limiter written from scratch · account locks for 15 min after 5 wrong passwords · same answer and timing for unknown emails |
+| 🍪 **Sessions** | New session ID at login (no fixation) · `HttpOnly` + `SameSite=Strict` cookie · 30-min idle **and** 8-h absolute timeout · stored in SQLite, not memory |
+| 🔁 **Session revocation** | Changing your password signs you out on every other device · email/password changes need the current password |
+| 🛡️ **CSRF & CORS** | Synchronizer CSRF token on every POST/PUT/DELETE · CORS allow-list from `.env` |
+| 🧱 **Headers** | CSP, `nosniff`, `X-Frame-Options`, Referrer-Policy, COOP/CORP, Permissions-Policy, HSTS in production |
+| ✅ **Validation** | Hand-written validators with field-level errors · database `CHECK` constraints as a second layer · every SQL value is a bound parameter |
+| 👮 **Authorization** | Role read from the database on every request · ownership checks against IDOR · one `canManageTrip()` policy (admins can manage everything) |
+| 🎟️ **Booking integrity** | Seat check and seat update are **one atomic SQL statement**: tested with 10 simultaneous bookings for 3 seats |
+| 🖼️ **Image uploads** | Real type checked from the file's bytes · image **re-encoded** (strips hidden payloads and GPS/EXIF data) · server-chosen random name · private folder · served with `nosniff` + CSP sandbox |
+| 🙈 **No data leaks** | Responses built from explicit field lists · generic error messages with a request ID · no server paths in the API |
+| 📜 **Audit log** | Logins, failed logins, lockouts, role changes, trip and booking changes, visible to admins |
+| 🧪 **Demo mode** | Demo accounts for learners, refused when `NODE_ENV=production`; `npm run create-admin` for real installs |
+
+What changed from v1, and why, is explained finding by finding in the [security review](docs/Security-Review-v1.docx).
+
+---
+
+## Quick start
+
+**Requirements:** [Node.js](https://nodejs.org) **22.13 or newer** (the database uses Node's built-in SQLite driver).
+
+### 1. Backend
+
+```bash
+cd backend
+npm install
+cp .env.example .env        # Windows: copy .env.example .env
+```
+
+Open `backend/.env` and set `SESSION_SECRET` to a long random value. Generate one with:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+```
+
+Then create the demo data and start the API:
+
+```bash
+npm run seed     # demo accounts + sample trips (only when DEMO_MODE=true)
+npm start        # http://localhost:5000
+```
+
+### 2. Frontend (in a second terminal)
+
+```bash
+cd frontend
+npm install
+npm run dev      # http://localhost:5173
+```
+
+Open **http://localhost:5173**. The Vite dev server forwards `/api` to the backend, so the browser
+only ever talks to one origin.
+
+### Demo accounts
+
+Created by `npm run seed` when `DEMO_MODE=true`. **For local learning only.**
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@tourly.demo` | `Demo-Admin-2026!` |
+| Manager | `manager@tourly.demo` | `Demo-Manager-2026!` |
+| User | `user@tourly.demo` | `Demo-User-2026!` |
+
+For a real installation set `DEMO_MODE=false` and create your own admin:
+
+```bash
+npm run create-admin   # asks for email, name and password (typed hidden, policy-checked)
+```
+
+---
+
+## Screenshots
+
+### Security in action
+
+| | |
+|---|---|
+| **Common passwords are rejected** <br><img src="docs/screenshots/signup-common-password-rejected.jpg" width="440"> | **Account lockout after 5 failed logins** <br><img src="docs/screenshots/account-lockout.jpg" width="440"> |
+| **A disguised file is rejected (browser *and* server)** <br><img src="docs/screenshots/fake-image-rejected.jpg" width="440"> | **Changing the email asks for the current password** <br><img src="docs/screenshots/email-change-reauth.jpg" width="440"> |
+| **Admin security log** <br><img src="docs/screenshots/admin-security-log.jpg" width="440"> | **31 automated security tests** <br><img src="docs/screenshots/tests-passing.jpg" width="440"> |
+
+### The application
+
+| | |
+|---|---|
+| **User dashboard with booking status** <br><img src="docs/screenshots/user-dashboard.jpg" width="440"> | **Booking confirmation** <br><img src="docs/screenshots/booking-confirmed.jpg" width="440"> |
+| **Cancelled bookings stay in history** <br><img src="docs/screenshots/booking-history-cancelled.jpg" width="440"> | **Manager dashboard** <br><img src="docs/screenshots/manager-dashboard.jpg" width="440"> |
+| **Bookings for a trip** <br><img src="docs/screenshots/trip-bookings.jpg" width="440"> | **Trips with bookings are cancelled, not deleted** <br><img src="docs/screenshots/cancel-trip-keeps-history.jpg" width="440"> |
+| **Admin: users and roles** <br><img src="docs/screenshots/admin-users.jpg" width="440"> | **Home** <br><img src="docs/screenshots/home.jpg" width="440"> |
+
+---
 
 ## Features
 
-### User Features
-- User registration and login (session-based authentication)
-- Browse all available trips/packages
-- Search and filter trips by location, price, and date
-- Book trips with name, number of people, and date selection
-- View personal bookings dashboard
-- Cancel bookings
-- Request to become a manager
+**Visitors:** browse upcoming trips, search and filter by location and price, "show more" pagination.
 
-### Manager Features
-- Create new trips with image upload
-- Edit and delete trips
-- View bookings for their trips
-- Manage trip availability
+**Users:** sign up and log in · book trips (seat limits enforced) · booking history with *Confirmed / Completed / Cancelled* status · cancel upcoming bookings · edit profile · request manager access · inactivity warning before automatic logout.
 
-### Admin Features
-- View all users
-- Approve/reject manager requests
-- Full system access
+**Managers:** create and edit trips with an image · see who booked each trip · delete a trip without bookings, or cancel a trip with bookings (history is kept).
 
-## Tech Stack
+**Admins:** everything a manager can do, for **all** trips · approve or reject manager requests · change roles · read the security log.
 
-### Backend
-- Node.js
-- Express.js
-- SQLite3
-- Express-session (session-based authentication)
-- Bcrypt (password hashing)
-- Multer (file uploads)
-- CORS
+---
 
-### Frontend
-- React
-- React Router DOM
-- Axios
-- Vite
-
-## Project Structure
+## Project structure
 
 ```
-course_project/
-├── backend/
-│   ├── config/
-│   │   └── database.js
-│   ├── controllers/
-│   │   ├── authController.js
-│   │   ├── userController.js
-│   │   ├── tripController.js
-│   │   ├── bookingController.js
-│   │   └── adminController.js
-│   ├── middleware/
-│   │   ├── auth.js
-│   │   └── upload.js
-│   ├── routes/
-│   │   ├── auth.js
-│   │   ├── users.js
-│   │   ├── trips.js
-│   │   ├── bookings.js
-│   │   └── admin.js
-│   ├── uploads/
-│   │   └── trips/
-│   ├── server.js
-│   └── package.json
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── context/
-│   │   ├── services/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   └── package.json
-└── README.md
+backend/
+├── src/
+│   ├── app.js                 # builds the Express app: the security pipeline in order
+│   ├── server.js              # starts the server
+│   ├── config/env.js          # loads and validates .env (fail fast)
+│   ├── db/                    # schema.sql · connection.js · seed.js · createAdmin.js
+│   ├── security/              # written from scratch: rateLimit · csrf · sessionStore · headers
+│   │                          #   password · imageType · audit
+│   ├── middleware/            # auth (roles, sessions) · upload limits · error handler
+│   ├── validators/            # hand-written input validation
+│   ├── services/              # imageService: the upload pipeline
+│   ├── views/                 # response allow-lists (what each API response may contain)
+│   ├── controllers/           # auth · users · trips · bookings · admin
+│   └── routes/index.js        # every route and its protections in one file
+├── tests/                     # node:test security and logic tests
+├── data/common-passwords.txt  # password deny-list
+├── storage/trips/             # uploaded images (private, git-ignored)
+└── .env.example
+frontend/
+└── src/                       # React app: pages · components · context · services/api.js
+docs/
+├── SECURITY.md                # threat model and controls
+├── Security-Review-v1.docx    # the review behind v2
+└── screenshots/
 ```
 
-## Setup Instructions
+---
 
-### Backend Setup
+## API
 
-1. Navigate to the backend directory:
+All routes are under `/api`. Every `POST`, `PUT` and `DELETE` needs the `X-CSRF-Token` header
+(get it from `GET /api/auth/csrf`).
+
+| Method & path | Access | Notes |
+|---|---|---|
+| `GET /auth/csrf` | public | returns `{ csrfToken }` |
+| `POST /auth/register` | public | rate-limited · password policy |
+| `POST /auth/login` | public | rate-limited · account lockout |
+| `POST /auth/logout` | any | |
+| `GET /auth/me` | any | `{ user }` or `{ user: null }` |
+| `GET /users/profile` · `PUT /users/profile` | user | email/password changes need `currentPassword` |
+| `GET /users/bookings` | user | booking history with status |
+| `POST /users/request-manager` · `POST /users/cancel-manager-request` | user | |
+| `GET /trips` | public | `?search&location&minPrice&maxPrice&date&page&limit` (max 50) |
+| `GET /trips/:id` | public | |
+| `GET /trips/my-trips` | manager, admin | admins see all trips |
+| `POST /trips` · `PUT /trips/:id` | manager (own), admin | multipart with `image` · upload rate limit |
+| `DELETE /trips/:id` | manager (own), admin | deletes, or cancels when bookings exist |
+| `POST /bookings` | user | atomic seat reservation |
+| `GET /bookings/my-bookings` | user | |
+| `DELETE /bookings/:id` | owner | marks the booking cancelled and releases seats |
+| `GET /bookings/trip/:tripId` | manager (own), admin | |
+| `GET /admin/users` · `GET /admin/manager-requests` | admin | |
+| `POST /admin/manager-requests/:id/approve` · `/reject` | admin | |
+| `PUT /admin/users/:id/role` | admin | cannot change own role or demote an admin |
+| `GET /admin/audit-log` | admin | `?limit` (max 200) |
+| `GET /images/:name` | public | only server-generated names · `nosniff` + CSP sandbox |
+
+---
+
+## Testing
+
 ```bash
 cd backend
+npm test
 ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+The tests start a fresh app with a temporary database and attack it the way a real client would:
+missing CSRF tokens, brute-force logins, a session ID planted before login, an HTML file disguised as a
+PNG, path traversal on the image route, 10 simultaneous bookings for the last 3 seats, users trying to
+cancel other people's bookings, and more. GitHub Actions runs them on every push, along with a frontend
+build and `npm audit`.
 
-3. Create a `.env` file (optional, defaults are set):
-```
-PORT=5000
-SESSION_SECRET=your-secret-key-change-in-production
-NODE_ENV=development
-```
+---
 
-4. Start the server:
-```bash
-npm start
-```
+## Limitations
 
-The backend will run on `http://localhost:5000`
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-```bash
-cd frontend
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start the development server:
-```bash
-npm run dev
-```
-
-The frontend will run on `http://localhost:5173`
-
-## Default Admin Account
-
-A default admin account is automatically created:
-- **Email:** admin@tourly.com
-- **Password:** admin123
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `POST /api/auth/logout` - Logout user
-- `GET /api/auth/me` - Get current user
-
-### Users
-- `GET /api/users/bookings` - Get user's bookings
-- `POST /api/users/request-manager` - Request manager role
-- `GET /api/users/profile` - Get user profile
-
-### Trips
-- `GET /api/trips` - Get all trips (with search/filter params)
-- `GET /api/trips/:id` - Get single trip
-- `POST /api/trips` - Create trip (manager/admin only)
-- `PUT /api/trips/:id` - Update trip (manager/admin only)
-- `DELETE /api/trips/:id` - Delete trip (manager/admin only)
-- `GET /api/trips/my-trips` - Get manager's trips
-
-### Bookings
-- `POST /api/bookings` - Create booking
-- `GET /api/bookings/my-bookings` - Get user's bookings
-- `DELETE /api/bookings/:id` - Cancel booking
-- `GET /api/bookings/trip/:tripId` - Get bookings for trip (manager only)
-
-### Admin
-- `GET /api/admin/users` - Get all users
-- `GET /api/admin/manager-requests` - Get pending manager requests
-- `POST /api/admin/manager-requests/:userId/approve` - Approve manager request
-- `POST /api/admin/manager-requests/:userId/reject` - Reject manager request
-
-## Database Schema
-
-### Users Table
-- id (PRIMARY KEY)
-- email (UNIQUE)
-- password (hashed)
-- name
-- role (user/manager/admin)
-- manager_request_status (null/pending/approved/rejected)
-- created_at
-
-### Trips Table
-- id (PRIMARY KEY)
-- name
-- image_path
-- date_available (DATE)
-- location
-- entry_fee (DECIMAL)
-- max_people (INTEGER)
-- current_available (INTEGER)
-- manager_id (FOREIGN KEY)
-- created_at
-
-### Bookings Table
-- id (PRIMARY KEY)
-- user_id (FOREIGN KEY)
-- trip_id (FOREIGN KEY)
-- booking_name
-- number_of_people (INTEGER)
-- booking_date (DATE)
-- created_at
-
-## Features Implementation
-
-### Booking System
-- When a booking is created, available spots decrease
-- When a booking is cancelled, available spots are restored
-- Booking date must match trip's available date
-- Number of people cannot exceed available spots
-
-### Manager Request Flow
-1. User requests to become manager
-2. Admin sees pending request in admin dashboard
-3. Admin can approve or reject
-4. If approved, user role changes to manager
-
-### Image Upload
-- Images are stored locally in `backend/uploads/trips/`
-- Supported formats: jpeg, jpg, png, gif, webp
-- Maximum file size: 5MB
-
-## Development Notes
-
-- Session cookies are used for authentication
-- CORS is configured for frontend-backend communication
-- Images are served statically from `/uploads/trips/`
-- Database is automatically initialized on first run
-- Default admin user is created automatically
+This is a learning project, not a production service. Known limits (in-memory rate-limit counters,
+HTTPS left to the hosting setup, SQLite's single writer, and others) are listed with their mitigations in
+[`docs/SECURITY.md`](docs/SECURITY.md#5-known-limitations).
 
 ## License
 
-ISC
-
-
-
-
+[ISC](LICENSE)

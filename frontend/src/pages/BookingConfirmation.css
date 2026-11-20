@@ -1,0 +1,284 @@
+.booking-confirmation {
+  min-height: calc(100vh - 80px);
+  padding: 4rem 2rem;
+  background: linear-gradient(to bottom, var(--light-bg, #f8fafc), white);
+}
+
+.booking-confirmation .container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.confirmation-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: white;
+  border-radius: var(--radius-xl, 1rem);
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, var(--success-color, #10b981), #059669);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: white;
+  font-weight: bold;
+  animation: scaleIn 0.5s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.confirmation-header h1 {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  color: var(--text-primary, #1e293b);
+  margin-bottom: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--primary-color, #6366f1), var(--secondary-color, #ec4899));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.confirmation-message {
+  color: var(--text-secondary, #64748b);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.confirmation-content {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.booking-details-card,
+.trip-details-card,
+.payment-summary-card {
+  background: white;
+  padding: 2.5rem;
+  border-radius: var(--radius-xl, 1rem);
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.booking-details-card h2,
+.trip-details-card h2,
+.payment-summary-card h2 {
+  color: var(--primary-color, #6366f1);
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-color, #e2e8f0);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  color: var(--text-secondary, #64748b);
+  font-weight: 500;
+}
+
+.detail-value {
+  color: var(--text-primary, #1e293b);
+  font-weight: 600;
+  text-align: right;
+}
+
+.trip-image-container {
+  margin-bottom: 1.5rem;
+  border-radius: var(--radius-lg, 0.75rem);
+  overflow: hidden;
+}
+
+.trip-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.trip-info h3 {
+  color: var(--text-primary, #1e293b);
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  color: var(--text-secondary, #64748b);
+}
+
+.summary-row.total-row {
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--border-color, #e2e8f0);
+  font-size: 1.25rem;
+  color: var(--text-primary, #1e293b);
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.print-btn,
+.dashboard-btn,
+.packages-btn {
+  padding: 1rem 2rem;
+  border-radius: var(--radius-lg, 0.75rem);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  border: none;
+}
+
+.print-btn {
+  background: linear-gradient(135deg, var(--primary-color, #6366f1), var(--primary-dark, #4f46e5));
+  color: white;
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+}
+
+.print-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+}
+
+.dashboard-btn {
+  background: white;
+  color: var(--primary-color, #6366f1);
+  border: 2px solid var(--primary-color, #6366f1);
+}
+
+.dashboard-btn:hover {
+  background: var(--primary-color, #6366f1);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.packages-btn {
+  background: var(--text-light, #94a3b8);
+  color: white;
+}
+
+.packages-btn:hover {
+  background: var(--text-secondary, #64748b);
+  transform: translateY(-2px);
+}
+
+.confirmation-footer {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: var(--radius-xl, 1rem);
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.confirmation-footer p {
+  color: var(--text-secondary, #64748b);
+  margin: 0.5rem 0;
+}
+
+.confirmation-footer p:first-child {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary, #1e293b);
+}
+
+.footer-note {
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.booking-confirmation-loading {
+  text-align: center;
+  padding: 4rem 2rem;
+  font-size: 1.25rem;
+  color: var(--text-secondary, #64748b);
+}
+
+/* Print styles */
+@media print {
+  .booking-confirmation {
+    background: white;
+    padding: 2rem;
+  }
+
+  .confirmation-actions,
+  .confirmation-footer {
+    display: none;
+  }
+
+  .booking-details-card,
+  .trip-details-card,
+  .payment-summary-card {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+}
+
+@media (max-width: 768px) {
+  .confirmation-actions {
+    flex-direction: column;
+  }
+
+  .print-btn,
+  .dashboard-btn,
+  .packages-btn {
+    width: 100%;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .detail-value {
+    text-align: left;
+  }
+}
+
+
+
+
