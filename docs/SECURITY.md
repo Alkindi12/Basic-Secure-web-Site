@@ -101,4 +101,4 @@ with **published passwords**. This is safe only because:
 ## 7. Reporting a vulnerability
 
 This is a learning project, but reports are welcome. Please open a GitHub issue **without** exploit
-details, or contact the maintainer through GitHub, and allow time for a fix before publishing.
+details, or contact the maintainer through GitHub.
